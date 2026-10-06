@@ -1,0 +1,318 @@
+```java
+package com.example.tp;
+
+
+// ======================================
+// Classe Auteur
+// ======================================
+class Auteur {
+
+    private static int compteur = 0;
+
+    private final int id;
+    private String nom;
+
+    private Livre[] livres;
+    private int nbLivres;
+
+    // Constructeur
+    public Auteur(String nom) {
+        this.id = ++compteur;
+        this.nom = nom;
+
+        livres = new Livre[5];
+        nbLivres = 0;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    // Ajouter un livre
+    public void ajouterLivre(Livre livre) {
+
+        // Vérifier si le livre existe déjà
+        for (int i = 0; i < nbLivres; i++) {
+            if (livres[i] == livre) {
+                return;
+            }
+        }
+
+        // Agrandir le tableau si nécessaire
+        if (nbLivres == livres.length) {
+
+            Livre[] tmp = new Livre[livres.length * 2];
+
+            System.arraycopy(
+                    livres,
+                    0,
+                    tmp,
+                    0,
+                    livres.length
+            );
+
+            livres = tmp;
+        }
+
+        livres[nbLivres++] = livre;
+    }
+
+    // Afficher les livres
+    public void afficherLivres() {
+
+        for (int i = 0; i < nbLivres; i++) {
+            System.out.println("  • " + livres[i]);
+        }
+    }
+
+    // Nombre de livres
+    public int getNbLivres() {
+        return nbLivres;
+    }
+
+    // toString
+    @Override
+    public String toString() {
+        return "Auteur[id=" + id
+                + ", nom=" + nom
+                + ", nbLivres=" + nbLivres
+                + "]";
+    }
+}
+
+
+// ======================================
+// Classe Livre
+// ======================================
+class Livre {
+
+    private static int compteur = 0;
+
+    private final int id;
+    private String titre;
+    private Auteur auteur;
+
+    // Constructeur
+    public Livre(String titre, Auteur auteur) {
+
+        this.id = ++compteur;
+        this.titre = titre;
+        this.auteur = auteur;
+
+        // Association automatique
+        auteur.ajouterLivre(this);
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getTitre() {
+        return titre;
+    }
+
+    public Auteur getAuteur() {
+        return auteur;
+    }
+
+    // toString
+    @Override
+    public String toString() {
+
+        return "Livre[id=" + id
+                + ", titre=" + titre
+                + ", auteur=" + auteur.getNom()
+                + "]";
+    }
+}
+
+
+// ======================================
+// Classe Bibliotheque
+// ======================================
+class Bibliotheque {
+
+    private static int compteur = 0;
+
+    private final int id;
+    private String nom;
+
+    private Livre[] collection;
+    private int nbLivres;
+
+    // Constructeur
+    public Bibliotheque(String nom) {
+
+        this.id = ++compteur;
+        this.nom = nom;
+
+        collection = new Livre[5];
+        nbLivres = 0;
+    }
+
+    // Getters
+    public int getId() {
+        return id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    // Ajouter un livre
+    public void ajouterLivre(Livre livre) {
+
+        // Vérifier les doublons
+        for (int i = 0; i < nbLivres; i++) {
+            if (collection[i] == livre) {
+                return;
+            }
+        }
+
+        // Agrandir le tableau si nécessaire
+        if (nbLivres == collection.length) {
+
+            Livre[] tmp = new Livre[collection.length * 2];
+
+            System.arraycopy(
+                    collection,
+                    0,
+                    tmp,
+                    0,
+                    collection.length
+            );
+
+            collection = tmp;
+        }
+
+        collection[nbLivres++] = livre;
+    }
+
+    // Afficher la collection
+    public void afficherCollection() {
+
+        for (int i = 0; i < nbLivres; i++) {
+
+            Livre livre = collection[i];
+
+            System.out.println(
+                    "  – " +
+                    livre.getTitre() +
+                    " (id=" +
+                    livre.getId() +
+                    ")"
+            );
+        }
+    }
+
+    // toString
+    @Override
+    public String toString() {
+
+        return "Bibliotheque[id=" + id
+                + ", nom=" + nom
+                + ", taille=" + nbLivres
+                + "]";
+    }
+}
+
+
+// ======================================
+// Classe Main
+// ======================================
+public class Main {
+
+    public static void main(String[] args) {
+
+        // ============================
+        // Création des auteurs
+        // ============================
+
+        Auteur hugo = new Auteur("Victor Hugo");
+
+        Auteur orwell = new Auteur("George Orwell");
+
+
+        // ============================
+        // Création des livres
+        // ============================
+
+        Livre m1 = new Livre(
+                "Les Misérables",
+                hugo
+        );
+
+        Livre ndp = new Livre(
+                "Notre-Dame de Paris",
+                hugo
+        );
+
+        Livre l1984 = new Livre(
+                "1984",
+                orwell
+        );
+
+
+        // ============================
+        // Création des bibliothèques
+        // ============================
+
+        Bibliotheque centrale =
+                new Bibliotheque("Centrale");
+
+        Bibliotheque quartier =
+                new Bibliotheque("Quartier");
+
+
+        // ============================
+        // Associations
+        // ============================
+
+        centrale.ajouterLivre(m1);
+        centrale.ajouterLivre(l1984);
+
+        quartier.ajouterLivre(m1);
+        quartier.ajouterLivre(ndp);
+
+
+        // ============================
+        // Affichage des auteurs
+        // ============================
+
+        System.out.println(hugo);
+
+        hugo.afficherLivres();
+
+        System.out.println();
+
+
+        System.out.println(orwell);
+
+        orwell.afficherLivres();
+
+        System.out.println();
+
+
+        // ============================
+        // Affichage des bibliothèques
+        // ============================
+
+        System.out.println(centrale);
+
+        centrale.afficherCollection();
+
+        System.out.println();
+
+
+        System.out.println(quartier);
+
+        quartier.afficherCollection();
+    }
+}
+```
